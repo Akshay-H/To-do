@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.7.0'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id "org.flywaydb.flyway" version "8.5.12"
 }
 
 group = 'com.tw'
@@ -15,8 +16,17 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation "org.flywaydb:flyway-core:8.5.12"
+	implementation 'org.postgresql:postgresql:42.3.3'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5432/todo'
+	user = 'akshay'
+	password = 'root'
+	locations = ['filesystem:src/main/resources/db/migration/sql']
 }
