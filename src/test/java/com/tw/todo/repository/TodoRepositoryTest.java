@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -42,6 +44,23 @@ public class TodoRepositoryTest {
 
         assertNotNull(updatedTodo);
         assertEquals(nameToUpdate,todoRepository.findById(updatedTodo.getId()).get().getName());
+
+    }
+
+
+    @Test
+    void shouldReturnAllTodoWhenGetAllTodo() {
+
+        Todo firstTodo = new Todo(1, "First todo");
+        Todo secondTodo = new Todo(2, "Second todo");
+        todoRepository.save(firstTodo);
+        todoRepository.save(secondTodo);
+
+        List<Todo> allTodo = todoRepository.findAll();
+
+        assertNotNull(allTodo);
+        assertEquals(2,allTodo.size());
+
     }
 
 }
