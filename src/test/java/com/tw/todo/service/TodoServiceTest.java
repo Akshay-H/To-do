@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -97,6 +98,14 @@ public class TodoServiceTest {
         Todo updatedTodo = todoService.updateTodoName(todo,anotherTodo.getName());
 
         assertEquals(anotherTodo.getName(), updatedTodo.getName());
+
     }
 
+    @Test
+    void shouldDeleteTodoWhenDeleteTodo() {
+
+        todoService.deleteTodo(todo);
+
+        assertThat(todoRepository.findById(todo.getId())).isEmpty();
+    }
 }
