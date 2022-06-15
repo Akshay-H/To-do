@@ -1,6 +1,8 @@
 package com.tw.todo.repository;
 
 import com.tw.todo.model.Todo;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -21,10 +23,23 @@ public class TodoRepositoryTest {
     @Autowired
     private TodoRepository todoRepository;
 
+    public Todo todo;
+
+    @BeforeEach
+    void setUp() {
+        todo = new Todo(1, "First todo");
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (todo != null) {
+            todoRepository.delete(todo);
+        }
+    }
+
     @Test
     void shouldReturnSavedTodoWhenSavingATodo() {
 
-        Todo todo = new Todo(1, "First todo");
         int expectedSavedId = 1;
 
         Todo savedTodo = todoRepository.save(todo);
@@ -37,7 +52,6 @@ public class TodoRepositoryTest {
     @Test
     void shouldReturnUpdatedTodoWhenUpdatingATodo() {
 
-        Todo todo = new Todo(1, "First todo");
         todoRepository.save(todo);
         Todo savedTodo = todoRepository.findById(todo.getId()).get();
 
@@ -54,10 +68,9 @@ public class TodoRepositoryTest {
     @Test
     void shouldReturnAllTodoWhenGetAllTodo() {
 
-        Todo firstTodo = new Todo(1, "First todo");
-        Todo secondTodo = new Todo(2, "Second todo");
-        todoRepository.save(firstTodo);
-        todoRepository.save(secondTodo);
+        Todo anotherTodo = new Todo(2, "Second todo");
+        todoRepository.save(todo);
+        todoRepository.save(anotherTodo);
 
         List<Todo> allTodo = todoRepository.findAll();
 
@@ -69,11 +82,10 @@ public class TodoRepositoryTest {
     @Test
     void shouldReturnTodoWhenGetTodoById() {
 
-        Todo firstTodo = new Todo(1, "First todo");
-        todoRepository.save(firstTodo);
-        int expectedId = firstTodo.getId();
+        todoRepository.save(todo);
+        int expectedId = todo.getId();
 
-        Todo expectedTodo = todoRepository.findById(firstTodo.getId()).get();
+        Todo expectedTodo = todoRepository.findById(todo.getId()).get();
 
         assertNotNull(expectedTodo);
         assertEquals(expectedId, expectedTodo.getId());
@@ -83,11 +95,10 @@ public class TodoRepositoryTest {
     @Test
     void shouldReturnTodoWhenGetTodoByName() {
 
-        Todo firstTodo = new Todo(1, "First todo");
-        todoRepository.save(firstTodo);
-        int expectedId = firstTodo.getId();
+        todoRepository.save(todo);
+        int expectedId = todo.getId();
 
-        Todo expectedTodo = todoRepository.findByName(firstTodo.getName()).get();
+        Todo expectedTodo = todoRepository.findByName(todo.getName()).get();
 
         assertNotNull(expectedTodo);
         assertEquals(expectedId, expectedTodo.getId());
@@ -97,10 +108,9 @@ public class TodoRepositoryTest {
     @Test
     void shouldDeleteTodoWhenDeletingTodo() {
 
-        Todo firstTodo = new Todo(1, "First todo");
-        int expectedId = firstTodo.getId();
+        int expectedId = todo.getId();
 
-        todoRepository.delete(firstTodo);
+        todoRepository.delete(todo);
         Optional<Todo> expectedTodo = todoRepository.findById(expectedId);
 
         assertThat(expectedTodo).isEmpty();
