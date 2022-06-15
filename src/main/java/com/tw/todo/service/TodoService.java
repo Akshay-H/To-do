@@ -32,4 +32,9 @@ public class TodoService {
     public Todo getTodoById(int id) {
         return todoRepository.findById(id).get();
     }
+
+    public Todo updateTodoName(Todo todo, String name) {
+        todo.setName(name);
+        return todoRepository.save(todo);
+    }
 }

@@ -89,4 +89,14 @@ public class TodoServiceTest {
 
     }
 
+    @Test
+    void shouldReturnUpdatedTodoWhenUpdatingATodo() {
+
+        when(todoRepository.save(todo)).thenReturn(anotherTodo);
+
+        Todo updatedTodo = todoService.updateTodoName(todo,anotherTodo.getName());
+
+        assertEquals(anotherTodo.getName(), updatedTodo.getName());
+    }
+
 }
