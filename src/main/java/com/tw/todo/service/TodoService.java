@@ -29,7 +29,7 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
-    public Todo getTodoByName(String name) {
-        return todoRepository.findByName(name).get();
+    public Todo getTodoById(int id) {
+        return todoRepository.findById(id).get();
     }
 }

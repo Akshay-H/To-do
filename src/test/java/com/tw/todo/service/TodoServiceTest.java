@@ -78,14 +78,14 @@ public class TodoServiceTest {
     }
 
     @Test
-    void shouldReturnTodoWhenGetByName() {
+    void shouldReturnTodoWhenGetById() {
 
-        when(todoRepository.findByName("First todo")).thenReturn(Optional.of(todo));
+        when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));
 
-        Todo expectedTodo = todoService.getTodoByName(todo.getName());
+        Todo expectedTodo = todoService.getTodoById(todo.getId());
 
         assertNotNull(expectedTodo);
-        assertEquals(todo, expectedTodo);
+        assertEquals(todo.getId(), expectedTodo.getId());
 
     }
 
