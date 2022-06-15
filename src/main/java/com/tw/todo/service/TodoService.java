@@ -28,4 +28,8 @@ public class TodoService {
     public List<Todo> getAllTodos() {
         return todoRepository.findAll();
     }
+
+    public Todo getTodoByName(String name) {
+        return todoRepository.findByName(name).get();
+    }
 }

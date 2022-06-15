@@ -67,8 +67,6 @@ public class TodoServiceTest {
     @Test
     void shouldReturnAllTodosWhenGetAllTodo() {
 
-        when(todoRepository.save(todo)).thenReturn(todo);
-        when(todoRepository.save(anotherTodo)).thenReturn(anotherTodo);
         List<Todo> expectedTodo = List.of(todo, anotherTodo);
         when(todoRepository.findAll()).thenReturn(expectedTodo);
 
@@ -76,6 +74,18 @@ public class TodoServiceTest {
 
         assertNotNull(expectedTodos);
         assertEquals(2, expectedTodos.size());
+
+    }
+
+    @Test
+    void shouldReturnTodoWhenGetByName() {
+
+        when(todoRepository.findByName("First todo")).thenReturn(Optional.of(todo));
+
+        Todo expectedTodo = todoService.getTodoByName(todo.getName());
+
+        assertNotNull(expectedTodo);
+        assertEquals(todo, expectedTodo);
 
     }
 
