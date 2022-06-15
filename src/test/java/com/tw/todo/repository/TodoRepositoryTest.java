@@ -3,6 +3,7 @@ package com.tw.todo.repository;
 import com.tw.todo.model.Todo;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -15,7 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class TodoRepositoryTest {
@@ -24,10 +24,12 @@ public class TodoRepositoryTest {
     private TodoRepository todoRepository;
 
     public Todo todo;
+    public Todo anotherTodo;
 
     @BeforeEach
     void setUp() {
-        todo = new Todo(1, "First todo");
+        todo = new Todo("First todo");
+        anotherTodo = new Todo("Second todo");
     }
 
     @AfterEach
@@ -35,17 +37,19 @@ public class TodoRepositoryTest {
         if (todo != null) {
             todoRepository.delete(todo);
         }
+        if (anotherTodo != null) {
+            todoRepository.delete(todo);
+        }
     }
 
     @Test
     void shouldReturnSavedTodoWhenSavingATodo() {
 
-        int expectedSavedId = 1;
-
-        Todo savedTodo = todoRepository.save(todo);
+        todoRepository.save(todo);
+        Todo savedTodo = todoRepository.findById(todo.getId()).get();
 
         assertNotNull(savedTodo);
-        assertEquals(expectedSavedId, savedTodo.getId());
+        assertEquals(todo, savedTodo);
 
     }
 
@@ -64,11 +68,9 @@ public class TodoRepositoryTest {
 
     }
 
-
     @Test
     void shouldReturnAllTodoWhenGetAllTodo() {
 
-        Todo anotherTodo = new Todo(2, "Second todo");
         todoRepository.save(todo);
         todoRepository.save(anotherTodo);
 

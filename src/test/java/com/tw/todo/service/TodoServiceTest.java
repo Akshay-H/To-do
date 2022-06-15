@@ -8,8 +8,7 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class TodoServiceTest {
@@ -19,7 +18,7 @@ public class TodoServiceTest {
     @Test
     void shouldSaveTodoWhenNewTodoIsSaved() throws TodoAlreadyExistsException {
 
-        Todo todo = new Todo(1, "First Todo");
+        Todo todo = new Todo("First Todo");
         todoRepository = Mockito.mock(TodoRepository.class);
         TodoService todoService = new TodoService(todoRepository);
         when(todoRepository.findById(todo.getId())).thenReturn(Optional.empty());
@@ -28,13 +27,14 @@ public class TodoServiceTest {
         Todo savedTodo = todoService.saveTodo(todo);
 
         assertNotNull(savedTodo);
+        assertEquals(todo, savedTodo);
 
     }
 
     @Test
     void shouldThrowTodoAlreadyExistsExceptionTodoWhenSavingAlreadyExistingTodo() {
 
-        Todo todo = new Todo(1, "First Todo");
+        Todo todo = new Todo("First Todo");
         todoRepository = Mockito.mock(TodoRepository.class);
         TodoService todoService = new TodoService(todoRepository);
         when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));

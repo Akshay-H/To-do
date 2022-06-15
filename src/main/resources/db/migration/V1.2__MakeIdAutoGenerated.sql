@@ -1,0 +1,2 @@
+ALTER TABLE todo DROP COLUMN id;
+ALTER TABLE todo ADD COLUMN id SERIAL primary key;

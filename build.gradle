@@ -31,5 +31,5 @@ flyway {
 	url = 'jdbc:postgresql://localhost:5431/todo'
 	user = 'akshay'
 	password = 'root'
-	locations = ['filesystem:src/main/resources/db/migration/sql']
+	locations = ['filesystem:src/main/resources/db/migration']
 }
