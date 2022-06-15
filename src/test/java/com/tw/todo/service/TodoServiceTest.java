@@ -3,9 +3,12 @@ package com.tw.todo.service;
 import com.tw.todo.exception.TodoAlreadyExistsException;
 import com.tw.todo.model.Todo;
 import com.tw.todo.repository.TodoRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,14 +16,32 @@ import static org.mockito.Mockito.when;
 
 public class TodoServiceTest {
 
-    private TodoRepository todoRepository;
+    private Todo todo;
+    private Todo anotherTodo;
+    private TodoRepository todoRepository = Mockito.mock(TodoRepository.class);
+    private TodoService todoService;
+
+    @BeforeEach
+    void setUp() {
+        todo = new Todo("First todo");
+        anotherTodo = new Todo("Second todo");
+        todoService = new TodoService(todoRepository);
+
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (todo != null) {
+            todoRepository.delete(todo);
+        }
+        if (anotherTodo != null) {
+            todoRepository.delete(todo);
+        }
+    }
 
     @Test
     void shouldSaveTodoWhenNewTodoIsSaved() throws TodoAlreadyExistsException {
 
-        Todo todo = new Todo("First Todo");
-        todoRepository = Mockito.mock(TodoRepository.class);
-        TodoService todoService = new TodoService(todoRepository);
         when(todoRepository.findById(todo.getId())).thenReturn(Optional.empty());
         when(todoRepository.save(todo)).thenReturn(todo);
 
@@ -34,9 +55,6 @@ public class TodoServiceTest {
     @Test
     void shouldThrowTodoAlreadyExistsExceptionTodoWhenSavingAlreadyExistingTodo() {
 
-        Todo todo = new Todo("First Todo");
-        todoRepository = Mockito.mock(TodoRepository.class);
-        TodoService todoService = new TodoService(todoRepository);
         when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));
         when(todoRepository.save(todo)).thenReturn(todo);
 
@@ -45,4 +63,20 @@ public class TodoServiceTest {
         });
 
     }
+
+    @Test
+    void shouldReturnAllTodosWhenGetAllTodo() {
+
+        when(todoRepository.save(todo)).thenReturn(todo);
+        when(todoRepository.save(anotherTodo)).thenReturn(anotherTodo);
+        List<Todo> expectedTodo = List.of(todo, anotherTodo);
+        when(todoRepository.findAll()).thenReturn(expectedTodo);
+
+        List<Todo> expectedTodos = todoService.getAllTodos();
+
+        assertNotNull(expectedTodos);
+        assertEquals(2, expectedTodos.size());
+
+    }
+
 }

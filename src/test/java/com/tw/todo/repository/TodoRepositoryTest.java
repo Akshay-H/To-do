@@ -23,8 +23,8 @@ public class TodoRepositoryTest {
     @Autowired
     private TodoRepository todoRepository;
 
-    public Todo todo;
-    public Todo anotherTodo;
+    private Todo todo;
+    private Todo anotherTodo;
 
     @BeforeEach
     void setUp() {
