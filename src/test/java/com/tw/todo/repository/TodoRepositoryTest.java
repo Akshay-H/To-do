@@ -7,9 +7,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -43,7 +46,7 @@ public class TodoRepositoryTest {
         Todo updatedTodo = todoRepository.save(savedTodo);
 
         assertNotNull(updatedTodo);
-        assertEquals(nameToUpdate,todoRepository.findById(updatedTodo.getId()).get().getName());
+        assertEquals(nameToUpdate, todoRepository.findById(updatedTodo.getId()).get().getName());
 
     }
 
@@ -59,7 +62,7 @@ public class TodoRepositoryTest {
         List<Todo> allTodo = todoRepository.findAll();
 
         assertNotNull(allTodo);
-        assertEquals(2,allTodo.size());
+        assertEquals(2, allTodo.size());
 
     }
 
@@ -73,7 +76,7 @@ public class TodoRepositoryTest {
         Todo expectedTodo = todoRepository.findById(firstTodo.getId()).get();
 
         assertNotNull(expectedTodo);
-        assertEquals(expectedId,expectedTodo.getId());
+        assertEquals(expectedId, expectedTodo.getId());
 
     }
 
@@ -87,7 +90,20 @@ public class TodoRepositoryTest {
         Todo expectedTodo = todoRepository.findByName(firstTodo.getName()).get();
 
         assertNotNull(expectedTodo);
-        assertEquals(expectedId,expectedTodo.getId());
+        assertEquals(expectedId, expectedTodo.getId());
+
+    }
+
+    @Test
+    void shouldDeleteTodoWhenDeletingTodo() {
+
+        Todo firstTodo = new Todo(1, "First todo");
+        int expectedId = firstTodo.getId();
+
+        todoRepository.delete(firstTodo);
+        Optional<Todo> expectedTodo = todoRepository.findById(expectedId);
+
+        assertThat(expectedTodo).isEmpty();
 
     }
 
