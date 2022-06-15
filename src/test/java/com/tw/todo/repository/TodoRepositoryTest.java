@@ -63,4 +63,18 @@ public class TodoRepositoryTest {
 
     }
 
+    @Test
+    void shouldReturnTodoWhenGetTodoById() {
+
+        Todo firstTodo = new Todo(1, "First todo");
+        todoRepository.save(firstTodo);
+        int expectedId = firstTodo.getId();
+
+        Todo allTodo = todoRepository.findById(firstTodo.getId()).get();
+
+        assertNotNull(allTodo);
+        assertEquals(expectedId,allTodo.getId());
+
+    }
+
 }
