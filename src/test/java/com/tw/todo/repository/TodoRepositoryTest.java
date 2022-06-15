@@ -28,4 +28,20 @@ public class TodoRepositoryTest {
         assertEquals(expectedSavedId, savedTodo.getId());
 
     }
+
+    @Test
+    void shouldReturnUpdatedTodoWhenUpdatingATodo() {
+
+        Todo todo = new Todo(1, "First todo");
+        todoRepository.save(todo);
+        Todo savedTodo = todoRepository.findById(todo.getId()).get();
+
+        String nameToUpdate = "Modified todo";
+        savedTodo.setName(nameToUpdate);
+        Todo updatedTodo = todoRepository.save(savedTodo);
+
+        assertNotNull(updatedTodo);
+        assertEquals(nameToUpdate,todoRepository.findById(updatedTodo.getId()).get().getName());
+    }
+
 }
