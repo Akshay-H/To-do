@@ -8,12 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class TodoServiceTest {
 
@@ -44,12 +44,10 @@ public class TodoServiceTest {
     void shouldSaveTodoWhenNewTodoIsSaved() throws TodoAlreadyExistsException {
 
         when(todoRepository.findById(todo.getId())).thenReturn(Optional.empty());
-        when(todoRepository.save(todo)).thenReturn(todo);
 
-        Todo savedTodo = todoService.saveTodo(todo);
+        todoService.saveTodo(todo);
 
-        assertNotNull(savedTodo);
-        assertEquals(todo, savedTodo);
+        verify(todoRepository).save(todo);
 
     }
 
@@ -62,42 +60,37 @@ public class TodoServiceTest {
         assertThrows(TodoAlreadyExistsException.class, () -> {
             todoService.saveTodo(todo);
         });
+        verify(todoRepository, never()).save(any(Todo.class));
 
     }
 
     @Test
     void shouldReturnAllTodosWhenGetAllTodo() {
 
-        List<Todo> expectedTodo = List.of(todo, anotherTodo);
-        when(todoRepository.findAll()).thenReturn(expectedTodo);
+        todoService.getAllTodos();
 
-        List<Todo> expectedTodos = todoService.getAllTodos();
-
-        assertNotNull(expectedTodos);
-        assertEquals(2, expectedTodos.size());
+        verify(todoRepository).findAll();
 
     }
 
     @Test
     void shouldReturnTodoWhenGetById() {
 
-        when(todoRepository.findById(todo.getId())).thenReturn(Optional.of(todo));
+        when(todoRepository.findById(todo.getId())).thenReturn(Optional.ofNullable(todo));
 
-        Todo expectedTodo = todoService.getTodoById(todo.getId());
+        Todo fetchedTodo = todoService.getTodoById(todo.getId());
 
-        assertNotNull(expectedTodo);
-        assertEquals(todo.getId(), expectedTodo.getId());
-
+        assertEquals(todo, fetchedTodo);
     }
 
     @Test
     void shouldReturnUpdatedTodoWhenUpdatingATodo() {
 
-        when(todoRepository.save(todo)).thenReturn(anotherTodo);
+        todo.setName(anotherTodo.getName());
 
-        Todo updatedTodo = todoService.updateTodoName(todo,anotherTodo.getName());
+        todoService.updateTodoName(todo, anotherTodo.getName());
 
-        assertEquals(anotherTodo.getName(), updatedTodo.getName());
+        verify(todoRepository).save(todo);
 
     }
 
@@ -106,6 +99,7 @@ public class TodoServiceTest {
 
         todoService.deleteTodo(todo);
 
-        assertThat(todoRepository.findById(todo.getId())).isEmpty();
+        verify(todoRepository).delete(todo);
+
     }
 }
